@@ -3,7 +3,7 @@ import Foundation
 import FoundationNetworking
 #endif
 
-protocol HTTPClient {
+public protocol HTTPClient {
   func fetchData(with request: URLRequest) async throws -> (Data, HTTPURLResponse)
 }
 

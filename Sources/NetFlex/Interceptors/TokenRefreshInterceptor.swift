@@ -1,6 +1,6 @@
 import Foundation
 
-class TokenRefreshInterceptor: RequestInterceptor {
+public class TokenRefreshInterceptor: RequestInterceptor {
   private let tokenProvider: () -> String?
   private let tokenRefresher: () async throws -> Void
   private let headerField: String?
@@ -21,7 +21,7 @@ class TokenRefreshInterceptor: RequestInterceptor {
     self.statusCodesToRefresh = statusCodesToRefresh
   }
   
-  func intercept(request: URLRequest) async throws -> URLRequest {
+  public func intercept(request: URLRequest) async throws -> URLRequest {
     var request = request
     if let token = tokenProvider(), let headerField = headerField {
       let formattedToken = tokenFormatter(token)
@@ -30,7 +30,7 @@ class TokenRefreshInterceptor: RequestInterceptor {
     return request
   }
   
-  func intercept(response: HTTPURLResponse, data: Data, for request: URLRequest) async throws -> (Data, HTTPURLResponse) {
+  public func intercept(response: HTTPURLResponse, data: Data, for request: URLRequest) async throws -> (Data, HTTPURLResponse) {
     if statusCodesToRefresh.contains(response.statusCode) {
       // Refresh the token
       try await tokenRefresher()
