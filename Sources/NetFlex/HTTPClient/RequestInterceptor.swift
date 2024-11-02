@@ -3,7 +3,7 @@ import Foundation
 import FoundationNetworking
 #endif
 
-protocol RequestInterceptor {
+public protocol RequestInterceptor {
   func intercept(request: URLRequest) async throws -> URLRequest
   func intercept(response: HTTPURLResponse, data: Data, for request: URLRequest) async throws -> (Data, HTTPURLResponse)
 }

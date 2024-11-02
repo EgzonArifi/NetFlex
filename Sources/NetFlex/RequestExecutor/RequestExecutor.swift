@@ -1,5 +1,5 @@
 import Foundation
 
-protocol RequestExecutor {
+public protocol RequestExecutor {
   func send<R: Request>(_ request: R) async throws -> R.Response
 }

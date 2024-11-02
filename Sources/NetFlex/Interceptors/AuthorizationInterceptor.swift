@@ -1,6 +1,6 @@
 import Foundation
 
-class AuthorizationInterceptor: RequestInterceptor {
+public class AuthorizationInterceptor: RequestInterceptor {
   private let tokenProvider: () -> String?
   private let headerField: String?
   private let tokenFormatter: (String) -> String
@@ -30,7 +30,7 @@ class AuthorizationInterceptor: RequestInterceptor {
     self.bodyEncoding = bodyEncoding
   }
   
-  func intercept(request: URLRequest) async throws -> URLRequest {
+  public func intercept(request: URLRequest) async throws -> URLRequest {
     var request = request
     guard let token = tokenProvider() else {
       return request
@@ -72,7 +72,7 @@ class AuthorizationInterceptor: RequestInterceptor {
     return request
   }
   
-  func intercept(response: HTTPURLResponse, data: Data, for request: URLRequest) async throws -> (Data, HTTPURLResponse) {
+  public func intercept(response: HTTPURLResponse, data: Data, for request: URLRequest) async throws -> (Data, HTTPURLResponse) {
     // No modification to the response
     return (data, response)
   }

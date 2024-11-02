@@ -1,6 +1,6 @@
 import Foundation
 
-protocol Request {
+public protocol Request {
   associatedtype Response: Decodable
   
   var path: String { get }

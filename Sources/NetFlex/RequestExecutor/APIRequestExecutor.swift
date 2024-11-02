@@ -3,7 +3,7 @@ import Foundation
 import FoundationNetworking
 #endif
 
-final class APIRequestExecutor {
+public final class APIRequestExecutor {
   private let requestBuilder: URLRequestBuilder
   private let httpClient: HTTPClient
   private let jsonDecoder: JSONDecoding
@@ -29,7 +29,7 @@ final class APIRequestExecutor {
 }
 
 extension APIRequestExecutor: RequestExecutor {
-  func send<R: Request>(_ request: R) async throws -> R.Response {
+  public func send<R: Request>(_ request: R) async throws -> R.Response {
     let urlRequest = try requestBuilder.build(from: request)
     return try await execute(with: urlRequest)
   }
