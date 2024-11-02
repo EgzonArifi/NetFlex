@@ -1,3 +1,19 @@
+<p align="center">
+    <a href="Resources/Docs/README.md">
+      <img src="Resources/Images/netflex.png" width="50%" alt="Lingua" />
+    </a>
+</p>
+<p align="center">
+    <a href="https://www.swift.org" alt="Swift">
+        <img src="https://img.shields.io/badge/Swift-5.9-orange.svg" />
+    </a>
+    <a href="./LICENSE" alt="License">
+        <img src="https://img.shields.io/badge/Licence-MIT-green.svg" />
+    </a>
+    <a href="https://github.com/egzonarifi/netflex/actions/workflows/tests.yml" alt="Tests Status">
+        <img src="https://github.com/egzonarifi/netflex/actions/workflows/tests.yml/badge.svg" />
+    </a>
+</p>
 
 # NetFlex
 
