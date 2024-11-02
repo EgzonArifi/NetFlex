@@ -11,12 +11,14 @@ final class APIRequestExecutor {
   private let validStatusCodes: Set<Int>
   private let errorHandler: APIErrorHandler?
   
-  init(requestBuilder: URLRequestBuilder,
-       httpClient: HTTPClient = URLSessionHTTPClient(),
-       jsonDecoder: JSONDecoding = JSONDecoder(),
-       jsonEncoder: JSONEncoding = JSONEncoder(),
-       validStatusCodes: Set<Int> = Set(200...299),
-       errorHandler: APIErrorHandler? = nil) {
+  init(
+    requestBuilder: URLRequestBuilder,
+    httpClient: HTTPClient = URLSessionHTTPClient(),
+    jsonDecoder: JSONDecoding = JSONDecoder(),
+    jsonEncoder: JSONEncoding = JSONEncoder(),
+    validStatusCodes: Set<Int> = Set(200...299),
+    errorHandler: APIErrorHandler? = nil
+  ) {
     self.requestBuilder = requestBuilder
     self.httpClient = httpClient
     self.jsonDecoder = jsonDecoder

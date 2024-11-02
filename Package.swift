@@ -7,7 +7,9 @@ let package = Package(
   name: "NetFlex",
   platforms: [
     .macOS(.v12),
-    .iOS(.v14)
+    .iOS(.v14),
+    .watchOS(.v9),
+    .tvOS(.v16)
   ],
   products: [
     .library(
