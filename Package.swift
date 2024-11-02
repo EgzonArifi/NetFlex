@@ -5,6 +5,10 @@ import PackageDescription
 
 let package = Package(
   name: "NetFlex",
+  platforms: [
+    .macOS(.v12),
+    .iOS(.v14)
+  ],
   products: [
     .library(
       name: "NetFlex",
