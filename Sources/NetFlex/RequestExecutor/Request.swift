@@ -10,7 +10,7 @@ public protocol Request {
   var allHTTPHeaderFields: [String: String]? { get }
 }
 
-extension Request {
+public extension Request {
   var queryItems: [URLQueryItem]? { nil }
   var body: Data? { nil }
   var allHTTPHeaderFields: [String: String]? { nil }

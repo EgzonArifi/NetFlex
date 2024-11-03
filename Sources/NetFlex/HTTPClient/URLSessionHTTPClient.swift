@@ -3,14 +3,14 @@ import Foundation
 import FoundationNetworking
 #endif
 
-class URLSessionHTTPClient: HTTPClient {
+public class URLSessionHTTPClient: HTTPClient {
   private let urlSession: URLSession
   
-  init(urlSession: URLSession = URLSession.shared) {
+  public init(urlSession: URLSession = URLSession.shared) {
     self.urlSession = urlSession
   }
   
-  func fetchData(with request: URLRequest) async throws -> (Data, HTTPURLResponse) {
+  public func fetchData(with request: URLRequest) async throws -> (Data, HTTPURLResponse) {
 #if canImport(FoundationNetworking)
     return try await makeData(for: request)
 #else

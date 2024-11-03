@@ -1,10 +1,15 @@
 import Foundation
 
-struct InvalidHTTPResponseError: LocalizedError {
-  let statusCode: Int
-  let data: Data?
+public struct InvalidHTTPResponseError: LocalizedError {
+  public let statusCode: Int
+  public let data: Data?
   
-  var errorDescription: String? {
+  public var errorDescription: String? {
     "Invalid HTTP response with status code: \(statusCode)"
+  }
+  
+  public init(statusCode: Int, data: Data?) {
+    self.statusCode = statusCode
+    self.data = data
   }
 }

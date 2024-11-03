@@ -3,7 +3,7 @@ import Foundation
 public class LoggingInterceptor: RequestInterceptor {
   private let logger: (String) -> Void
   
-  init(logger: @escaping (String) -> Void = { print($0) }) {
+  public init(logger: @escaping (String) -> Void = { print($0) }) {
     self.logger = logger
   }
   

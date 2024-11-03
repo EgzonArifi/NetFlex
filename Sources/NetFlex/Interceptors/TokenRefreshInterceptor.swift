@@ -7,7 +7,7 @@ public class TokenRefreshInterceptor: RequestInterceptor {
   private let tokenFormatter: (String) -> String
   private let statusCodesToRefresh: Set<Int>
   
-  init(
+  public init(
     tokenProvider: @escaping () -> String?,
     tokenRefresher: @escaping () async throws -> Void,
     headerField: String? = "Authorization",
@@ -33,10 +33,16 @@ public class TokenRefreshInterceptor: RequestInterceptor {
   public func intercept(response: HTTPURLResponse, data: Data, for request: URLRequest) async throws -> (Data, HTTPURLResponse) {
     if statusCodesToRefresh.contains(response.statusCode) {
       // Refresh the token
-      try await tokenRefresher()
+      do {
+        try await tokenRefresher()
+      } catch {
+        // If token refresh fails, throw the error
+        throw error
+      }
       
-      // Signal that the request should be retried
-      throw InterceptorError.retryRequired
+      // After refreshing, signal a retry with the original error
+      let error = InvalidHTTPResponseError(statusCode: response.statusCode, data: data)
+      throw InterceptorError.retryRequired(error: error)
     }
     return (data, response)
   }

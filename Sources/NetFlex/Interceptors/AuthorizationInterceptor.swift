@@ -74,6 +74,6 @@ public class AuthorizationInterceptor: RequestInterceptor {
   
   public func intercept(response: HTTPURLResponse, data: Data, for request: URLRequest) async throws -> (Data, HTTPURLResponse) {
     // No modification to the response
-    return (data, response)
+    (data, response)
   }
 }

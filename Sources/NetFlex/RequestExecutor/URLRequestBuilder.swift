@@ -3,10 +3,10 @@ import Foundation
 import FoundationNetworking
 #endif
 
-struct URLRequestBuilder {
+public struct URLRequestBuilder {
   let baseURLString: String
   
-  init(baseURLString: String) {
+  public init(baseURLString: String) {
     self.baseURLString = baseURLString
   }
   
