@@ -11,7 +11,7 @@ public final class APIRequestExecutor {
   private let validStatusCodes: Set<Int>
   private let errorHandler: APIErrorHandler?
   
-  init(
+  public init(
     requestBuilder: URLRequestBuilder,
     httpClient: HTTPClient = URLSessionHTTPClient(),
     jsonDecoder: JSONDecoding = JSONDecoder(),
@@ -35,16 +35,26 @@ extension APIRequestExecutor: RequestExecutor {
   }
   
   private func execute<T: Decodable>(with request: URLRequest) async throws -> T {
-    let (data, httpResponse) = try await httpClient.fetchData(with: request)
-    
-    guard validStatusCodes.contains(httpResponse.statusCode) else {
-      if let errorHandler = errorHandler {
-        return try errorHandler.handleError(data: data, statusCode: httpResponse.statusCode)
-      } else {
-        throw InvalidHTTPResponseError(statusCode: httpResponse.statusCode, data: data)
+    do {
+      let (data, httpResponse) = try await httpClient.fetchData(with: request)
+      
+      guard validStatusCodes.contains(httpResponse.statusCode) else {
+        if let errorHandler = errorHandler {
+          return try errorHandler.handleError(data: data, statusCode: httpResponse.statusCode)
+        } else {
+          throw InvalidHTTPResponseError(statusCode: httpResponse.statusCode, data: data)
+        }
       }
+      
+      return try jsonDecoder.decode(T.self, from: data)
+    } catch let error as InvalidHTTPResponseError {
+      if let errorHandler = errorHandler, let data = error.data {
+        return try errorHandler.handleError(data: data, statusCode: error.statusCode)
+      } else {
+        throw error
+      }
+    } catch {
+      throw error
     }
-    
-    return try jsonDecoder.decode(T.self, from: data)
   }
 }

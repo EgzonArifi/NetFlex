@@ -1,5 +1,5 @@
 import Foundation
 
 enum InterceptorError: Error {
-  case retryRequired
+  case retryRequired(error: Error)
 }

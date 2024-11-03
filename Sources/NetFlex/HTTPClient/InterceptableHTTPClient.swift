@@ -3,55 +3,67 @@ import Foundation
 import FoundationNetworking
 #endif
 
-class InterceptableHTTPClient: HTTPClient {
+public class InterceptableHTTPClient: HTTPClient {
   private let httpClient: HTTPClient
   private let interceptors: [RequestInterceptor]
   private let maxRetryCount: Int
   
-  init(httpClient: HTTPClient = URLSessionHTTPClient(), interceptors: [RequestInterceptor] = [], maxRetryCount: Int = 3) {
+  public init(httpClient: HTTPClient = URLSessionHTTPClient(), interceptors: [RequestInterceptor] = [], maxRetryCount: Int = 3) {
     self.httpClient = httpClient
     self.interceptors = interceptors
     self.maxRetryCount = maxRetryCount
   }
   
-  func fetchData(with request: URLRequest) async throws -> (Data, HTTPURLResponse) {
+  public  func fetchData(with request: URLRequest) async throws -> (Data, HTTPURLResponse) {
     var attempt = 0
     var lastError: Error?
-    var request = request
     
-    while true {
+    retryLoop: while attempt <= maxRetryCount {
+      var currentRequest = request
+      attempt += 1
+      
       do {
-        attempt += 1
         // Apply request interceptors
         for interceptor in interceptors {
-          request = try await interceptor.intercept(request: request)
+          currentRequest = try await interceptor.intercept(request: currentRequest)
         }
         
         // Perform the network request
-        let (data, response) = try await httpClient.fetchData(with: request)
+        let (data, response) = try await httpClient.fetchData(with: currentRequest)
         
         var modifiedData = data
         var modifiedResponse = response
         
         // Apply response interceptors
         for interceptor in interceptors {
-          (modifiedData, modifiedResponse) = try await interceptor.intercept(
-            response: modifiedResponse,
-            data: modifiedData,
-            for: request
-          )
+          do {
+            (modifiedData, modifiedResponse) = try await interceptor.intercept(
+              response: modifiedResponse,
+              data: modifiedData,
+              for: currentRequest
+            )
+          } catch InterceptorError.retryRequired(let error) {
+            lastError = error
+            if attempt > maxRetryCount {
+              throw lastError!
+            } else {
+              continue retryLoop // Retry the request
+            }
+          }
         }
         
         // Success
         return (modifiedData, modifiedResponse)
         
-      } catch InterceptorError.retryRequired {
-        lastError = InterceptorError.retryRequired
+      } catch InterceptorError.retryRequired(let error) {
+        lastError = error
         if attempt > maxRetryCount {
-          break
+          throw lastError!
+        } else {
+          continue retryLoop // Retry the request
         }
-        continue
       } catch {
+        // Non-retryable error
         throw error
       }
     }

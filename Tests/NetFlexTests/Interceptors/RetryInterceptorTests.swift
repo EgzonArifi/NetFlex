@@ -19,7 +19,8 @@ class RetryInterceptorTests: XCTestCase {
           httpVersion: nil,
           headerFields: nil
         )!
-        return (Data(), response)
+        let data = "Server Error".data(using: .utf8)!
+        return (data, response)
       } else {
         // Simulate successful response
         let response = HTTPURLResponse(
@@ -52,7 +53,7 @@ class RetryInterceptorTests: XCTestCase {
     XCTAssertEqual(responseString, "success")
   }
   
-  func testRetryInterceptorStopsAfterMaxRetries() async throws {
+  func testRetryInterceptorStopsAfterMaxRetriesAndThrowsActualError() async throws {
     // Arrange
     let maxRetryCount = 2
     let retryInterceptor = RetryInterceptor()
@@ -68,7 +69,8 @@ class RetryInterceptorTests: XCTestCase {
         httpVersion: nil,
         headerFields: nil
       )!
-      return (Data(), response)
+      let data = "Server Error".data(using: .utf8)!
+      return (data, response)
     }
     
     let interceptors: [RequestInterceptor] = [retryInterceptor]
@@ -84,8 +86,15 @@ class RetryInterceptorTests: XCTestCase {
     do {
       _ = try await httpClient.fetchData(with: request)
       XCTFail("Expected error to be thrown")
-    } catch {
+    } catch let error as InvalidHTTPResponseError {
+      // Assert
+      XCTAssertEqual(error.statusCode, 500)
+      if let errorMessage = String(data: error.data!, encoding: .utf8) {
+        XCTAssertEqual(errorMessage, "Server Error")
+      }
       XCTAssertEqual(attemptCount, maxRetryCount + 1) // Initial attempt + retries
+    } catch {
+      XCTFail("Unexpected error type: \(error)")
     }
   }
 }
